@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middleware/authMiddleware");
 // signup - route
 router.post("/sign-up", async (req, res) => {
   try {
@@ -108,5 +109,22 @@ router.get("/check-cookie", async (req, res) => {
   res.status(200).json({
     message: false,
   });
+});
+
+// route to get user details
+
+router.get("/user-details", authMiddleware, async (req, res) => {
+  try {
+    const { email } = req.user;
+    const existingUser = await User.findOne({ email: email }).select(
+      "-password"
+    );
+    return res.status(200).json({
+      user: existingUser,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
 });
 module.exports = router;

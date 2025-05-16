@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../images/Logo.png';
 import { IoReorderThreeOutline } from "react-icons/io5";
@@ -6,6 +6,7 @@ import { RxCross2 } from "react-icons/rx";
 
 const Navbar = () => {
     const [MobileNav, setMobileNav] = useState(false);
+
     const navLinks = [
         { name: 'Home', path: '/' },
         { name: 'Categories', path: '/categories' },
@@ -13,8 +14,17 @@ const Navbar = () => {
         { name: 'Profile', path: '/profile' }
     ];
 
+    // Disable scroll when menu is open
+    useEffect(() => {
+        if (MobileNav) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [MobileNav]);
+
     return (
-        <nav className="px-4 md:px-8 lg:px-12 py-2 relative">
+        <nav className="px-4 md:px-8 lg:px-12 py-2 relative z-50">
             <div className='flex items-center justify-between'>
                 <div className='logo brand-name w-2/6 flex items-center gap-4'>
                     <img src={logo} alt="podstream" className='h-12' />
@@ -40,7 +50,7 @@ const Navbar = () => {
 
                 <div className='w-4/6 flex items-center justify-end lg:hidden z-50'>
                     <button
-                        className={`text-3xl ${MobileNav ? "rotate-360" : "rotate-180"} transition-all duration-300`}
+                        className={`text-3xl transition-all duration-300`}
                         onClick={() => setMobileNav(!MobileNav)}
                     >
                         {MobileNav ? <RxCross2 /> : <IoReorderThreeOutline />}
@@ -49,9 +59,15 @@ const Navbar = () => {
             </div>
 
             {/* Mobile nav */}
-            <div className={`fixed top-0 left-0 w-full h-screen bg-blue-100 ${MobileNav ? "translate-y-0" : "translate-y-[100%]"} transition-transform duration-500 ease-in-out`}>
+            <div
+                className={`
+                    fixed top-0 left-0 w-full h-screen bg-blue-100 z-50 
+                    transition-transform duration-500 ease-in-out
+                    ${MobileNav ? "translate-y-0 pointer-events-auto" : "translate-y-full pointer-events-none"}
+                `}
+            >
                 <div className='p-4 flex items-center justify-end text-3xl'>
-                    <button onClick={() => setMobileNav(!MobileNav)}><RxCross2 /></button>
+                    <button onClick={() => setMobileNav(false)}><RxCross2 /></button>
                 </div>
                 <div className='h-full flex flex-col items-center justify-center'>
                     {navLinks.map((items, i) => (

@@ -29,7 +29,7 @@ const Navbar = () => {
             <div className='flex items-center justify-between'>
                 <div className='logo brand-name w-2/6 flex items-center gap-4'>
                     <img src={logo} alt="podstream" className='h-12' />
-                    <Link to='/' className='text-2xl font-bold>'>PodStream</Link>
+                    <Link to='/' className='text-2xl font-bold'>PodStream</Link>
                 </div>
                 <div className='hidden w-2/6 lg:flex items-center justify-center'>
                     {navLinks.map((items, i) => (
@@ -45,7 +45,7 @@ const Navbar = () => {
                     </button>
                 </div>
             </div>
-            <div className={`fixed top-0 left-0 w-full h-screen bg-blue-100 ${MobileNav ? "translate-y-[0%]":"translate-y-[100%]" } transition-all duration-500  `}>
+            <div className={`fixed top-0 left-0 w-full h-screen bg-blue-100 ${MobileNav ? "translate-y-[0%]":"translate-y-[100%]" } transition-all duration-500  ease-in-out z-50`}>
                 <div className='p-4 flex items-center justify-end text-3xl'>
                     <button  onClick={() => setMobileNav(!MobileNav)} className='bg-black text-white rounded-full p-2'><RxCross2 /></button>
                 </div>

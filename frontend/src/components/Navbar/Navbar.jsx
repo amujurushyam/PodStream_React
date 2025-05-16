@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom';
 import logo from '../../images/Logo.png';
 import { IoReorderThreeOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const [MobileNav, setMobileNav] = useState(false);
 
     const navLinks = [
         { name: 'Home', path: '/' },
         { name: 'Categories', path: '/categories' },
         { name: 'All Podcasts', path: '/all-podcasts' },
-        { name: 'Profile', path: '/profile' }
+        // { name: 'Profile', path: '/profile' }
     ];
 
     // Disable scroll when menu is open
@@ -44,8 +46,11 @@ const Navbar = () => {
                 </div>
 
                 <div className='hidden w-2/6 lg:flex items-center justify-end'>
-                    <Link to="/login" className='px-6 py-3 border border-black rounded-full'>Login</Link>
-                    <Link to="/signup" className='ms-4 px-6 py-3 bg-black text-white rounded-full'>SignUp</Link>
+                    {!isLoggedIn && <>
+                        <Link to="/login" className='px-6 py-3 border border-black rounded-full'>Login</Link>
+                        <Link to="/signup" className='ms-4 px-6 py-3 bg-black text-white rounded-full'>SignUp</Link>
+                    </>}
+                    {isLoggedIn && <Link to="/profile" className='ms-4 px-6 py-3 bg-black text-white rounded-full'>Profile</Link>}
                 </div>
 
                 <div className='w-4/6 flex items-center justify-end lg:hidden z-50'>

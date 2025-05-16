@@ -102,11 +102,11 @@ router.post("/logout", async (req, res) => {
 router.get("/check-cookie", async (req, res) => {
   const token = req.cookies.podstreamUsertoken;
   if (token) {
-    res.status(200).json({
+   return res.status(200).json({
       message: true,
     });
   }
-  res.status(200).json({
+  return res.status(200).json({
     message: false,
   });
 });

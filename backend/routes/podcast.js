@@ -1,48 +1,81 @@
+const express = require("express");
+const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
-const upload = require("../middleware/multer");
-const Category = require("../models/category");
-const user = require("../models/user");
-const Podcast = require("../models/podcast");
-const router = require("express").Router();
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
-// add podcast
+const Category = require("../models/category");
+const User = require("../models/user");
+const Podcast = require("../models/podcast");
+
+// Ensure uploads folder exists
+const uploadDir = path.join(__dirname, "../uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+// Multer configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, `${Date.now()}-${file.fieldname}${ext}`);
+  },
+});
+
+const upload = multer({ storage }).fields([
+  { name: "frontImage", maxCount: 1 },
+  { name: "audioFile", maxCount: 1 },
+]);
+
+// ✅ Add Podcast
 router.post("/add-podcast", authMiddleware, upload, async (req, res) => {
   try {
     const { title, description, category } = req.body;
-    const frontImage = req.files["frontImage"][0].path;
-    const audioFile = req.files["audioFile"][0].path;
+    const frontImage = req.files?.frontImage?.[0]?.path;
+    const audioFile = req.files?.audioFile?.[0]?.path;
+
     if (!title || !description || !category || !frontImage || !audioFile) {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
-    const { user } = req;
-    const Category = await Category.findOne({ categoryName: category });
-    if (!Category) {
+
+    const userData = req.user;
+
+    const categoryDoc = await Category.findOne({ categoryName: category });
+    if (!categoryDoc) {
       return res.status(400).json({ message: "Category not found" });
     }
-    const CategoryId = Category._id;
-    const userid = user._id;
+
     const newPodcast = new Podcast({
       frontImage,
       audioFile,
       title,
       description,
-      user: userid,
-      category: CategoryId,
+      user: userData._id,
+      category: categoryDoc._id,
     });
+
     await newPodcast.save();
-    await Category.findByIdAndUpdate(CategoryId, {
+
+    await Category.findByIdAndUpdate(categoryDoc._id, {
       $push: { podcasts: newPodcast._id },
     });
-    await user.findByIdAndUpdate(userid, {
+
+    await User.findByIdAndUpdate(userData._id, {
       $push: { podcasts: newPodcast._id },
     });
+
     res.status(200).json({ message: "Podcast added successfully" });
   } catch (error) {
+    console.error("Add Podcast Error:", error);
     return res.status(500).json({ message: "Failed to add podcast" });
   }
 });
 
-// get all podcasts
+// ✅ Get All Podcasts
 router.get("/get-podcasts", async (req, res) => {
   try {
     const podcasts = await Podcast.find()
@@ -54,30 +87,30 @@ router.get("/get-podcasts", async (req, res) => {
   }
 });
 
-// get user podcasts
+// ✅ Get User Podcasts
 router.get("/get-user-podcasts", authMiddleware, async (req, res) => {
   try {
-    const { user } = req;
-    const userid = user._id;
-    const data = await user
-      .findById(userid)
+    const userData = req.user;
+    const data = await User.findById(userData._id)
       .populate({
         path: "podcasts",
         populate: { path: "category" },
       })
       .select("-password");
+
     if (data && data.podcasts) {
       data.podcasts.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
     }
+
     return res.status(200).json({ data: data.podcasts });
   } catch (error) {
     return res.status(500).json({ message: "Failed to get podcasts" });
   }
 });
 
-// get podcast by id
+// ✅ Get Single Podcast
 router.get("/get-podcast/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,7 +121,7 @@ router.get("/get-podcast/:id", async (req, res) => {
   }
 });
 
-// get podcasts by category
+// ✅ Get Podcasts by Category
 router.get("/category/:category", async (req, res) => {
   try {
     const { category } = req.params;
@@ -98,10 +131,12 @@ router.get("/category/:category", async (req, res) => {
         populate: { path: "category" },
       }
     );
+
     let podcasts = [];
-    categories.forEach((category) => {
-      podcasts = [...podcasts, ...category.podcasts];
+    categories.forEach((cat) => {
+      podcasts = [...podcasts, ...cat.podcasts];
     });
+
     return res.status(200).json({ data: podcasts });
   } catch (error) {
     return res.status(500).json({ message: "Failed to get podcast" });

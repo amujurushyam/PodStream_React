@@ -10,9 +10,9 @@ const Categories = () => {
             img: "https://cdn.create.vista.com/downloads/b7cf25c7-8830-4920-80ec-99a05b2519ba_1024.jpeg"
         },
         {
-            name: "Business",
+            name: "Bussiness",
             color: "bg-green-200",
-            to: "/categories/Business",
+            to: "/categories/Bussiness",
             img: "https://dynamic.brandcrowd.com/template/preview/design/c8617fe9-6f83-4594-82fc-cde62e150da1?v=4&designTemplateVersion=2&size=design-preview-standalone-1x"
         },
         {

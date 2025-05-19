@@ -10,6 +10,11 @@ import Profile from './pages/Profile'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { authActions } from './store/auth'
+import AddPodcasts from './pages/AddPodcasts'
+import AllPodcasts from './pages/AllPodcasts'
+import CategoriesPage from './pages/CategoriesPage'
+import DescriptionPage from './pages/DescriptionPage'
+
 
 
 const App = () => {
@@ -38,6 +43,10 @@ const App = () => {
             <Route index element={<Home />} />
             <Route path='/categories' element={<Categories />} />
             <Route path='/profile' element={<Profile />} />
+            <Route path='/add-podcast' element={<AddPodcasts />} />
+            <Route path='/all-podcasts' element={<AllPodcasts />} />
+            <Route path='/categories/:cat' element={<CategoriesPage />} />
+            <Route path='/description/:id' element={<DescriptionPage />} />
           </Route>
           <Route path="/" element={<AuthLayout />}>
             <Route path='/signup' element={<Signup />} />

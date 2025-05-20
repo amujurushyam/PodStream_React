@@ -36,12 +36,13 @@ const Categories = () => {
     ];
 
     return (
-        <div className='h-screen lg:h-[78vh]'>
+        <div className='min-h-screen lg:min-h-[78vh]'>
             <div className='px-4 lg:px-12 py-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
                 {cat.map((items, i) => (
                     <Link
                         to={items.to}
                         key={i}
+                        tabIndex={0}
                         className={`rounded px-8 py-4 text-xl font-semibold ${items.color} hover:scale-105 transform cursor-pointer shadow-xl transition-all duration-300 relative h-[22vh] overflow-hidden`}
                     >
                         <div>{items.name}</div>
@@ -50,6 +51,7 @@ const Categories = () => {
                                 src={items.img}
                                 alt={`${items.name} category`}
                                 className='rounded rotate-12 h-[15vh] md:h-[17vh] lg:h-[18vh]'
+                                onError={e => { e.currentTarget.src = '/default-image.png'; }}
                             />
                         </div>
                     </Link>

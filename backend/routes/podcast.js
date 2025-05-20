@@ -31,6 +31,19 @@ const upload = multer({ storage }).fields([
   { name: "audioFile", maxCount: 1 },
 ]);
 
+// ✅ Inline Seeding for Required Categories
+const seedCategories = async () => {
+  const categories = ["Education", "Hobbies", "Comedy", "Business", "Government"];
+  for (const name of categories) {
+    const exists = await Category.findOne({ categoryName: name });
+    if (!exists) {
+      await Category.create({ categoryName: name });
+      console.log("Created missing category:", name);
+    }
+  }
+};
+seedCategories();
+
 // ✅ Add Podcast
 router.post("/add-podcast", authMiddleware, upload, async (req, res) => {
   try {
@@ -44,7 +57,11 @@ router.post("/add-podcast", authMiddleware, upload, async (req, res) => {
 
     const userData = req.user;
 
-    const categoryDoc = await Category.findOne({ categoryName: category });
+    // Find category case-insensitively
+    const categoryDoc = await Category.findOne({
+      categoryName: new RegExp(`^${category}$`, "i"),
+    });
+
     if (!categoryDoc) {
       return res.status(400).json({ message: "Category not found" });
     }
@@ -121,16 +138,17 @@ router.get("/get-podcast/:id", async (req, res) => {
   }
 });
 
-// ✅ Get Podcasts by Category
-router.get("/category/:category", async (req, res) => {
+// ✅ Get Podcasts by Category (case-insensitive)
+router.get("/category/:cat", async (req, res) => {
   try {
-    const { category } = req.params;
-    const categories = await Category.find({ categoryName: category }).populate(
-      {
-        path: "podcasts",
-        populate: { path: "category" },
-      }
-    );
+    const { cat } = req.params;
+
+    const categories = await Category.find({
+      categoryName: new RegExp(`^${cat}$`, "i"),
+    }).populate({
+      path: "podcasts",
+      populate: { path: "category" },
+    });
 
     let podcasts = [];
     categories.forEach((cat) => {

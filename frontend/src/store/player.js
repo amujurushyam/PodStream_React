@@ -16,7 +16,7 @@ const playerSlice = createSlice({
     },
     changeImage(state, action) {
       const imgOfSong = action.payload;
-      state.songPath = imgOfSong;
+      state.img = imgOfSong;
     },
   },
 });

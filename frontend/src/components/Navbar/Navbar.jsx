@@ -85,8 +85,11 @@ const Navbar = () => {
                             {items.name}
                         </Link>
                     ))}
-                    <Link to="/login" className='mb-6 text-2xl hover:font-semibold transition-all duration-300' onClick={() => setMobileNav(false)}>Login</Link>
-                    <Link to="/signup" className='mb-6 text-2xl hover:font-semibold transition-all duration-300' onClick={() => setMobileNav(false)}>Signup</Link>
+                    {!isLoggedIn  ? <>
+                        <Link to="/login" className='mb-6 text-2xl hover:font-semibold transition-all duration-300' onClick={() => setMobileNav(false)}>Login</Link>
+                        <Link to="/signup" className='mb-6 text-2xl hover:font-semibold transition-all duration-300' onClick={() => setMobileNav(false)}>Signup</Link>
+                    </> : <Link to="/profile" className='mb-6 text-2xl hover:font-semibold transition-all duration-300' onClick={() => setMobileNav(false)}>Profile</Link>}
+
                 </div>
             </div>
         </nav>

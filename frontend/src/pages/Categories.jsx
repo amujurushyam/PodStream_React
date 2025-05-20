@@ -10,9 +10,9 @@ const Categories = () => {
             img: "https://cdn.create.vista.com/downloads/b7cf25c7-8830-4920-80ec-99a05b2519ba_1024.jpeg"
         },
         {
-            name: "Bussiness",
+            name: "Business",
             color: "bg-green-200",
-            to: "/categories/Bussiness",
+            to: "/categories/Business",
             img: "https://dynamic.brandcrowd.com/template/preview/design/c8617fe9-6f83-4594-82fc-cde62e150da1?v=4&designTemplateVersion=2&size=design-preview-standalone-1x"
         },
         {
@@ -42,13 +42,13 @@ const Categories = () => {
                     <Link
                         to={items.to}
                         key={i}
-                        className={`rounded px-8 py-4 text-xl font-semibold ${items.color} hover:scale-105 transform cursor-pointer shadow-xl transition-all duration-300 relative h-[22vh] overflow-hidden `}
+                        className={`rounded px-8 py-4 text-xl font-semibold ${items.color} hover:scale-105 transform cursor-pointer shadow-xl transition-all duration-300 relative h-[22vh] overflow-hidden`}
                     >
                         <div>{items.name}</div>
                         <div className='w-full flex items-center justify-end absolute -bottom-2 -right-2'>
                             <img
                                 src={items.img}
-                                alt={items.name}
+                                alt={`${items.name} category`}
                                 className='rounded rotate-12 h-[15vh] md:h-[17vh] lg:h-[18vh]'
                             />
                         </div>
